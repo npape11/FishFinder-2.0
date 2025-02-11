@@ -1,12 +1,11 @@
+#github login
+login.tok
+
 #virtual environment
 venv/
 
 #pycache
 __pycache__/
-
-#backend
-backend/
-database.db
 
 #env variables
 .env
