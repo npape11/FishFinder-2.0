@@ -1,5 +1,7 @@
-from flask import Flask, Blueprint, render_template, request, redirect, url_for
-from werkzeug.security import generate_password_hash
+from flask import Blueprint, render_template, request, redirect, url_for, flash
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import login_user, login_required, logout_user, current_user
+from .models import users
 
 auth = Blueprint('auth', __name__)
 
@@ -11,13 +13,14 @@ def register():
         password = request.form.get('password')
         repeat_pass = request.form.get('password-repeat')
 
-        if not username or not email or not password or not repeat_pass:
-            return "All fields are required!", 400
-
-        if password != repeat_pass:
+        user = users.query.filter_by(email=email).first()
+        
+        if user:
+            flash('Email already exists.', category='error')
+        elif not username or not email or not password or not repeat_pass:
+            flash('All fileds required!', category='error')
+        elif password != repeat_pass:
             return "Passwords do not match!", 400
-
-        hashed_pass = generate_password_hash(password)
 
     return render_template('register.html')
 
