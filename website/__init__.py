@@ -4,9 +4,10 @@ from dotenv import load_dotenv
 import os
 
 db = SQLAlchemy()
-load_dotenv()
 
 def create_app():
+
+    load_dotenv()
 
     app = Flask(__name__)
     app.config['SECRET_KEY'] = os.getenv("SEC_KEY")
@@ -14,12 +15,12 @@ def create_app():
     db.init_app(app)
 
     from .auth import auth
+    from .views import views
 
     app.register_blueprint(auth, url_prefix='/')
-    
+    app.register_blueprint(views, url_prefix='/')
+
     from .models import User
 
     return app
 
-print(os.getenv("SEC_KEY"))
-print(os.getenv("DB_URI"))

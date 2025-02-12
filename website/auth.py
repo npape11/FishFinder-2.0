@@ -20,3 +20,11 @@ def register():
         hashed_pass = generate_password_hash(password)
 
     return render_template('register.html')
+
+@auth.route('/login')
+def login():
+    return "login"
+
+@auth.route('/logout')
+def logout():
+    return "logout"
