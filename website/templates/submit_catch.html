@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Submit a Catch{% endblock %}
+
+{% block content %}
+<form method="POST">
+  <h3 align="center">Submit Your Catch</h3>
+
+  <div class="form-group">
+    <label for="species_id">Fish Species</label>
+    <select class="form-control" id="species_id" name="species_id" required>
+      {% for fish in fish_species %}
+        <option value="{{ fish.id }}">{{ fish.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="weight">Weight (lbs)</label>
+    <input
+      type="number"
+      step="0.01"
+      class="form-control"
+      id="weight"
+      name="weight"
+      placeholder="Enter weight"
+      required
+    />
+  </div>
+
+  <div class="form-group">
+    <label for="length">Length (inches)</label>
+    <input
+      type="number"
+      step="0.01"
+      class="form-control"
+      id="length"
+      name="length"
+      placeholder="Enter length"
+      required
+    />
+  </div>
+
+  <div class="form-group">
+    <label for="latitude">Latitude</label>
+    <input
+      type="number"
+      step="0.000001"
+      class="form-control"
+      id="latitude"
+      name="latitude"
+      placeholder="Enter latitude"
+      required
+    />
+  </div>
+
+  <div class="form-group">
+    <label for="longitude">Longitude</label>
+    <input
+      type="number"
+      step="0.000001"
+      class="form-control"
+      id="longitude"
+      name="longitude"
+      placeholder="Enter longitude"
+      required
+    />
+  </div>
+
+  <br />
+  <button type="submit" class="btn btn-primary">Submit Catch</button>
+</form>
+{% endblock %}
+

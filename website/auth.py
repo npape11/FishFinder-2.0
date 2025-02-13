@@ -31,9 +31,10 @@ def register():
             db.session.add(new_user)
             db.session.commit()
             flash("Account Created!", category='success')
+            login_user(user, remember=True)
             return redirect(url_for('views.home'))
 
-    return render_template('register.html')
+    return render_template('register.html', user=current_user)
 
 @auth.route('/login', methods=('GET', 'POST'))
 def login():
@@ -47,14 +48,18 @@ def login():
         if user:
             if check_password_hash(user.password, password):
                 flash('Successfully logged in!', category='success')
+                login_user(user, remember=True)
                 return redirect(url_for('views.home'))
             else:
                 flash('Incorrect Email or Password!', category='error')
         else:
             flash('Incorrect Email or Password!', category='error')
 
-    return render_template('login.html')
+    return render_template('login.html', user=current_user)
 
 @auth.route('/logout')
+@login_required
 def logout():
-    return "logout"
+    logout_user()
+    return redirect(url_for('auth.login'))
+
