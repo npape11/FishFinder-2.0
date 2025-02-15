@@ -2,6 +2,8 @@ from flask import Flask, Blueprint, render_template, request, redirect, url_for,
 from flask_login import login_user, login_required, logout_user, current_user
 from .models import Users, FishSpecies, Catches
 from . import db
+from dotenv import load_dotenv
+import os
 
 views = Blueprint('views', __name__)
 
@@ -13,24 +15,28 @@ def home():
     return render_template('base.html', user=current_user)
 
 #Catch Route
-
-@views.route('/submit-catch', methods=('GET','POST'))
+@views.route("/submit-catch", methods=["GET", "POST"])
 @login_required
 def submit_catch():
-    if request.method == 'POST':
-        
-        species_id = request.form.get('species_id')
-        weight = request.form.get('weight')
-        length = request.form.get('length')
-        latitude = request.form.get('latitude')
-        longitude = request.form.get('longitude')
-        
-        if not (species_id and weight and length and latitude and longitude):
-            flash('Please fill out all fields.', category='error')
-            return redirect(url_for('views.submit_catch'))
 
+    load_dotenv()
+    GMAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
+
+    if request.method == "POST":
+        species_id = request.form.get("species_id")
+        weight = request.form.get("weight")
+        length = request.form.get("length")
+        latitude = request.form.get("latitude")
+        longitude = request.form.get("longitude")
+
+        if not latitude or not longitude:
+            flash("Please select a location on the map!", category="error")
+            return redirect(url_for("views.submit_catch"))
+        elif not species_id and weight and length:
+            flash("All fields must be filled out!", category="error")
+            return redirect(url_for("views.submit_catch"))
         new_catch = Catches(
-            user_id=current_user.id,  # Automatically associate with logged-in user
+            user_id=current_user.id,  # Automatically assigns the logged-in user's ID
             species_id=species_id,
             weight=weight,
             length=length,
@@ -40,12 +46,12 @@ def submit_catch():
 
         db.session.add(new_catch)
         db.session.commit()
-        flash('Catch successfully recorded!', category='success')
-        return redirect(url_for('views.home'))
-    
-    fish_species = FishSpecies.query.all()
-    return render_template('submit_catch.html', fish_species=fish_species, user=current_user)
 
+        flash("Catch submitted successfully!", "success")
+        return redirect(url_for("views.home"))
+
+    fish_species = FishSpecies.query.all()
+    return render_template("submit_catch.html", user=current_user, fish_species=fish_species, GOOGLE_MAPS_API_KEY=GMAPS_API_KEY)
 #Fish Species/Information Routes
 
 @views.route('/fish')
