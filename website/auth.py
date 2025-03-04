@@ -3,11 +3,16 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
 from .models import Users
 from . import db
+import re
 
 auth = Blueprint('auth', __name__)
 
 @auth.route('/register', methods=('GET', 'POST'))
 def register():
+
+    if current_user.is_authenticated:  # Check if the user is already logged in
+        return redirect(url_for('views.home'))
+
     if request.method == 'POST':
 
         email = request.form.get('email')
@@ -24,6 +29,9 @@ def register():
             flash(f'Username `{user_username.username}` already in use.', category='error')
         elif not username or not email or not password or not repeat_pass:
             flash('All fields are required!', category='error')
+        elif not re.match(r'^[a-zA-Z0-9._-]+$', username):
+            flash("Invalid username! Usernames can only include letters, numbers, dots (.), dashes (-), " \
+                  "and underscores (_). No special characters or spaces are allowed.", category='error')
         elif password != repeat_pass:
             flash("Passwords do not match!", category='error')
         else:
@@ -31,13 +39,17 @@ def register():
             db.session.add(new_user)
             db.session.commit()
             flash("Account Created!", category='success')
-            login_user(user, remember=True)
+            login_user(new_user, remember=True)
             return redirect(url_for('views.home'))
 
     return render_template('register.html', user=current_user)
 
 @auth.route('/login', methods=('GET', 'POST'))
 def login():
+
+    if current_user.is_authenticated:  # Check if the user is already logged in
+        return redirect(url_for('views.home'))
+    
     if request.method == 'POST':
 
         email = request.form.get('email')

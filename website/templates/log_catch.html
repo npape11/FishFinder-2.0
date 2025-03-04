@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Submit Catch{% endblock %}
+
+{% block content %}
+	<h2>Submit a Catch</h2>
+
+	<!-- Log Catch Container -->
+	<div class="log-catch-container">
+	    <div id="map"></div>
+	    <!-- Catch Submission Form -->
+	    <div class="catch-form">
+		<form id="catch-form" method="POST">
+		    <label for="species">Select Fish Species:</label>
+		    <select id="species" name="species_id">
+			{% for fish in fish_species %}
+			<option value="{{ fish.id }}">{{ fish.name }}</option>
+			{% endfor %}
+		    </select>
+		    <label for="weight">Weight (lbs):</label>
+		    <input type="number" id="weight" name="weight" step="0.1" required>
+		    <label for="length">Length (inches):</label>
+		    <input type="number" id="length" name="length" step="0.1" required>
+		    <input type="hidden" id="latitude" name="latitude">
+		    <input type="hidden" id="longitude" name="longitude">
+		    <button type="submit">Submit Catch</button>
+		</form>
+	    </div>
+	</div>
+
+	<!-- Google Maps API -->
+	<script src="https://maps.googleapis.com/maps/api/js?key={{ api_key }}&callback=initMap" async defer></script>
+	<script src="{{ url_for('static', filename='index.js') }}?v=1.0.1"></script>
+{% endblock %}

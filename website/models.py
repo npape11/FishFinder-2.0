@@ -16,9 +16,9 @@ class FishSpecies(db.Model):
     scientific_name = db.Column(db.String(255), nullable=False)
     habitat = db.Column(db.Text, nullable=False)
     image_url = db.Column(db.Text, nullable=False)
-
+    
     catches_fishSp = db.relationship('Catches', backref='fish_species', lazy=True)
-
+    
 class Catches(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
@@ -28,7 +28,8 @@ class Catches(db.Model):
     length = db.Column(db.Float, nullable=False)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
+    address = db.Column(db.String(200), nullable=True)
     timestamp = db.Column(db.DateTime, default=datetime.now)
     
     user_Catches = db.relationship('Users', backref='catches', lazy=True)
-
+    

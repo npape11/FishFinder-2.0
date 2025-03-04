@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard - FishFinder{% endblock %}
+{% block title %}Dashboard{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
@@ -18,15 +18,20 @@
             <h5>🎣 Recent Catches</h5>
         </div>
         <div class="card-body">
-            {% if catches %}
+            {% if recent_catches %}
                 <ul class="list-group">
-                    {% for catch in catches %}
-                        <li class="list-group-item">
-                            <strong>{{ catch.user }}</strong> caught a <strong>{{ catch.species }}</strong> 
-                            weighing <strong>{{ catch.weight }} lbs</strong> at {{ catch.location }}.
-                            <small class="text-muted">({{ catch.time }})</small>
-                        </li>
-                    {% endfor %}
+		    {% for catch, username, name in recent_catches %}
+                    	<li class="list-group-item">
+				{%if catch.address %}
+					<strong><a href="/{{ username }}">{{ username }}<a/></strong> caught a 
+					{{ catch.length }} inch {{ catch.weight }} lb {{ name }} in {{ catch.address }}!	
+	        			<small class="text-muted">({{ catch.timestamp.strftime('%Y-%m-%d %H:%M:%S') }})</small>
+				{% else %}
+					<strong><a href="/{{ username }}">{{ username }}<a/></strong> caught a {{ catch.length }}
+					 inch {{ catch.weight }} lb {{ name }} at {{ catch.latitude }}, {{ catch.longitude }}!
+                                	<small class="text-muted">({{ catch.timestamp.strftime('%Y-%m-%d %H:%M:%S') }})</small>
+				{% endif %}
+			{% endfor %}
                 </ul>
             {% else %}
                 <p>No recent catches. Be the first to log one!</p>
@@ -50,7 +55,7 @@
                     {% endfor %}
                 </ul>
             {% else %}
-                <p>You haven’t logged any catches yet. <a href="/log-catch">Log one now!</a></p>
+                <p>You haven’t logged any catches yet. <a href="/submit-catch">Log one now!</a></p>
             {% endif %}
         </div>
     </div>
